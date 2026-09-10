@@ -1,0 +1,61 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box ;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 24px;
+    padding-right: 24px;
+    align-items: center;
+}
+button {
+background-color: #B8651A;
+color: white;
+padding-top: 6px;
+padding-right: 16px;
+padding-left: 16px;
+padding-bottom: 6px;
+}
+a {
+    display: flex;
+    justify-content: space-between;
+    text-decoration: none;
+}
+.topbar {
+    display: grid;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+}
+.mr-jesse {
+    display:grid;
+    font-weight: 400;
+    font-size: 12px;
+    color: #7A7060;
+}
+.lamzy {
+    display: grid;
+     font-weight: 400;
+    font-size: 12px;
+    color: #7A7060
+}
+.layout {
+    display:grid;
+    grid-template-columns: repeat(2,1fr);
+    padding-top: 24px;
+}
+input {
+    color: #FAF8F4;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.space {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}

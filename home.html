@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>project</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link rel="StyleSheet" href="home.css">
+</head>
+<body>
+ <header class="card">
+     <div class="first">the margin</div>
+     <nav id="not-login">
+        <a href="#">post</a>
+        <a href="./home-logged in/logged in .html">Sign in</a>
+        <button> <a href="./register/register.html">Get started</a></button>
+     </nav>
+     <nav id="login" style="display: none;">
+        <a href="#">post</a>
+        <button class="write-post" style="background-color: #b8651a;"><a href="./home-logged in/Blog details/CULTURE/Culture.html">Write</a></button>
+     </nav>
+ </header>  
+ <div class="hero">
+    <h4 class="writing">Independent writing</h4>
+    <h2 class="reading">Ideas worth sitting with.</h2>
+    <p class="under">Essays on culture, technology, and the examined life. No <br>algorithms, no hot takes.</p>
+ 
+    <div class="information">
+        <div>
+            <img src="images/Image (The Quiet Discipline of Reading Without Purpose).png">
+        </div>
+        <div class="page">
+            <h6>culture</h6>
+            <h3>The Quiet Discipline of Reading Without Purpose</h3>
+            <p>In an age of productivity optimization, there is<br> something quietly radical about picking up a<br> book with no agenda beyond the pleasure of it.</p>
+            <div class="about">
+                <div>
+                    <img src="images/Image (Margot Ellison).png">
+            </div>
+            <p>Margot Ellison · August 18, 2026 · 4 min read</p>
+            </div>
+        </div>
+    </div>
+  
+    <section class="below-hero">
+        
+        <div class="title">MORE Essays</div>
+        
+        <div class="tech">
+
+            <div class="tech-sub">
+                <div class="tech-image">
+                    <img src="images/BlogListing.png">
+
+                </div>
+                <h1 class="come">technology</h1>
+                <h2 class="welcome">What Software Engineers Get Wrong About Writing</h2>
+                <p class="story">Code and prose share a surprising number of <br>virtues. Clarity, precision, economy. But</p>
+                <div class="more">
+                <div>
+                    <img src="images/Image (Thomas Vael) (1).png">
+                </div>
+                <p>thomas vael.5 min</p>
+
+                </div>
+            </div>
+            <div class="tech-sub">
+                <div class="tech-image">
+                    <img src="images/Image (On Cities That Reward Slowness).png">
+                </div>
+                <h1 class="come">trevel</h1>
+                <h2 class="welcome">On Cities That Reward Slowness</h2>
+                <p class="story">Some cities are built for speed. Others reveal <br>themselves only to those patient enough to.</p>
+                <div class="more">
+                    <div>
+                        <img src="images/Image (Margot Ellison).png">
+                    </div>
+                    <p>margot ellision.6 min</p>
+                </div>
+            </div>
+            <div class="tech-sub">
+                <div class="tech-image">
+                    <img src="images/Image (The Surprising Ethics of Making Things).png">
+                </div>
+                <h1 class="come">IDEAS</h1>
+                <h2 class="welcome">The Surprising Ethics of Making Things</h2>
+                <p class="story">Every object you make is a small argument<br> about how the world should be. The ethics of<br>.</p>
+                <div class="more">
+        <div>
+            <img src="images/Image (Thomas Vael) (1).png">
+        </div>
+        <p>thomas vael.5 min</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div> 
+
+ <div class="footer">
+    <h2 class="title">the margin</h2>
+    <h2 class="next">A place for ideas worth keeping.</h2>
+ </div>
+
+ <script>
+
+    const token = localStorage.getItem("token");
+
+    console.log(token , " getting token..");
+
+    if(token == null || token == "") {
+
+        document.getElementById("not-login").style.display = "flex";
+    document.getElementById("login").style.display = "none";
+
+    } else {
+        document.getElementById("not-login").style.display = "none";
+    document.getElementById("login").style.display = "flex";
+    };
+
+    
+ </script>
+</body>
+</html>

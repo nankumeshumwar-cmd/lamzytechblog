@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="register.css">
+    
+    </script>
+</head>
+<body>
+    <header>
+        <div class="view">The Margin</div>
+        <nav>
+             <a href="#">Post</a>
+<a href="#">Sign in</a>
+<button>GET STARTED</button>
+</nav>
+</header>
+<section class="inform">
+    <form id="registerForm">
+
+        <h1>Start writing</h1>
+        <P>Create an account and publish your first essay.</P>
+        <label for="fullName" class="have"> YOUR Name</label>
+        <input id="fullName" type="text" placeholder="christabel">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="nankume@gmail.com">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="1234567">
+        <button id="submitBtn" type="submit" class="down">Create account</button>
+        <label for="signIn" class="type">Already have an account?<a class="sign-up" href="">Sign in</a> </label>
+        
+    </form>
+</section>
+<div class="footer">
+    <h2>the margin</h2>
+    <h2>A place for ideas worth keeping.</h2>
+</div>
+
+
+
+<script src="../home-logged in/API/api.js"></script>
+
+
+<script>
+  const form = document.getElementById("registerForm");
+  const msg = document.getElementById("msg");
+  const submitBtn = document.getElementById("submitBtn");
+
+
+
+  async function registerStudent(fullName, email, password, ) {
+    const data = await apiRequest("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ fullName, email, password , department: "Computer Science", level: "300"}),
+    });
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("student", JSON.stringify(data.student));
+    return data.student;
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+    console.log("registering...");
+    try {
+
+      // const student = {
+      //   id: "hello",
+      //   fullName: "Christabel"
+      // }
+      const student = await registerStudent(
+        document.getElementById("fullName").value,
+        document.getElementById("email").value,
+        document.getElementById("password").value,
+    
+      );
+      console.log(`Welcome, ${student.fullName}! Token saved. Redirecting to login test page...`);
+      setTimeout(() => (window.location.href = "../home.html"), 1200);
+    } catch (err) {
+        console.log(err)
+      console.log(err.message);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Create account";
+    }
+  });
+</script>
+
+</body>
