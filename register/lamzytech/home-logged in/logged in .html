@@ -9,10 +9,14 @@
 <body>
 <header class="content">
 <div class="view">The Margin</div>
-<nav>
-    <a href="#">Post</a>
-<a href="#">Sign in</a>
-<button>GET STARTED</button>
+<nav id="not-login">
+    <a href="../home.html">Post</a>
+    <a href="./logged in .html">Sign in</a>
+    <button><a href="../register/register.html">Get started</a></button>
+</nav>
+<nav id="login" style="display: none;">
+    <a href="../home.html">Post</a>
+    <button class="write-post" style="background-color: #b8651a;"><a href="./Blog details/CULTURE/Culture.html">Write</a></button>
 </nav>
 </header>
 <section class="inform">
@@ -34,6 +38,17 @@
     <h2>The Margin</h2>
     <p class="place">A place for ideas worth keeping.</p>
 </div>
+<script>
+    const token = localStorage.getItem("token");
+
+    if (token == null || token == "") {
+        document.getElementById("not-login").style.display = "flex";
+        document.getElementById("login").style.display = "none";
+    } else {
+        document.getElementById("not-login").style.display = "none";
+        document.getElementById("login").style.display = "flex";
+    }
+</script>
 
 </body>
 </html>

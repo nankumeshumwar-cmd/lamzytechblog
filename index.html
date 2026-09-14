@@ -13,12 +13,12 @@
  <header class="card">
      <div class="first">the margin</div>
      <nav id="not-login">
-        <a href="#">post</a>
+        <a href="./index.html">post</a>
         <a href="./home-logged in/logged in .html">Sign in</a>
         <button> <a href="./register/register.html">Get started</a></button>
      </nav>
      <nav id="login" style="display: none;">
-        <a href="#">post</a>
+        <a href="./index.html">post</a>
         <button class="write-post" style="background-color: #b8651a;"><a href="./home-logged in/Blog details/CULTURE/Culture.html">Write</a></button>
      </nav>
  </header>  
@@ -27,74 +27,13 @@
     <h2 class="reading">Ideas worth sitting with.</h2>
     <p class="under">Essays on culture, technology, and the examined life. No <br>algorithms, no hot takes.</p>
  
-    <div class="information">
-        <div>
-            <img src="images/Image (The Quiet Discipline of Reading Without Purpose).png">
-        </div>
-        <div class="page">
-            <h6>culture</h6>
-            <h3>The Quiet Discipline of Reading Without Purpose</h3>
-            <p>In an age of productivity optimization, there is<br> something quietly radical about picking up a<br> book with no agenda beyond the pleasure of it.</p>
-            <div class="about">
-                <div>
-                    <img src="images/Image (Margot Ellison).png">
-            </div>
-            <p>Margot Ellison · August 18, 2026 · 4 min read</p>
-            </div>
-        </div>
-    </div>
+    <div id="featuredPost" class="information"></div>
   
     <section class="below-hero">
         
         <div class="title">MORE Essays</div>
         
-        <div class="tech">
-
-            <div class="tech-sub">
-                <div class="tech-image">
-                    <img src="images/BlogListing.png">
-
-                </div>
-                <h1 class="come">technology</h1>
-                <h2 class="welcome">What Software Engineers Get Wrong About Writing</h2>
-                <p class="story">Code and prose share a surprising number of <br>virtues. Clarity, precision, economy. But</p>
-                <div class="more">
-                <div>
-                    <img src="images/Image (Thomas Vael) (1).png">
-                </div>
-                <p>thomas vael.5 min</p>
-
-                </div>
-            </div>
-            <div class="tech-sub">
-                <div class="tech-image">
-                    <img src="images/Image (On Cities That Reward Slowness).png">
-                </div>
-                <h1 class="come">trevel</h1>
-                <h2 class="welcome">On Cities That Reward Slowness</h2>
-                <p class="story">Some cities are built for speed. Others reveal <br>themselves only to those patient enough to.</p>
-                <div class="more">
-                    <div>
-                        <img src="images/Image (Margot Ellison).png">
-                    </div>
-                    <p>margot ellision.6 min</p>
-                </div>
-            </div>
-            <div class="tech-sub">
-                <div class="tech-image">
-                    <img src="images/Image (The Surprising Ethics of Making Things).png">
-                </div>
-                <h1 class="come">IDEAS</h1>
-                <h2 class="welcome">The Surprising Ethics of Making Things</h2>
-                <p class="story">Every object you make is a small argument<br> about how the world should be. The ethics of<br>.</p>
-                <div class="more">
-        <div>
-            <img src="images/Image (Thomas Vael) (1).png">
-        </div>
-        <p>thomas vael.5 min</p>
-                </div>
-            </div>
-        </div>
+        <div id="postsGrid" class="tech"></div>
     </section>
 </div> 
 
@@ -103,23 +42,118 @@
     <h2 class="next">A place for ideas worth keeping.</h2>
  </div>
 
+ <script src="./home-logged in/API/api.js"></script>
  <script>
-
     const token = localStorage.getItem("token");
 
-    console.log(token , " getting token..");
-
-    if(token == null || token == "") {
-
+    if (token == null || token == "") {
         document.getElementById("not-login").style.display = "flex";
-    document.getElementById("login").style.display = "none";
-
+        document.getElementById("login").style.display = "none";
     } else {
         document.getElementById("not-login").style.display = "none";
-    document.getElementById("login").style.display = "flex";
-    };
+        document.getElementById("login").style.display = "flex";
+    }
 
-    
+    function formatDate(value) {
+        if (!value) return "Recently";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        });
+    }
+
+    function safeText(value, fallback) {
+        return value ?? fallback;
+    }
+
+    function renderFeaturedPost(post) {
+        const featured = document.getElementById("featuredPost");
+        if (!featured || !post) return;
+
+        const image = safeText(post.imageUrl, "images/Image (The Quiet Discipline of Reading Without Purpose).png");
+        const category = safeText(post.category, "culture").toLowerCase();
+        const title = safeText(post.title, "The Quiet Discipline of Reading Without Purpose");
+        const excerpt = safeText(post.excerpt, post.content || "In an age of productivity optimization, there is something quietly radical about picking up a book with no agenda beyond the pleasure of it.");
+        const author = post.author && post.author.fullName ? post.author.fullName : "Margot Ellison";
+        const readTime = post.readTime || 4;
+        const createdAt = formatDate(post.createdAt || post.date);
+
+        featured.innerHTML = `
+            <div>
+                <img src="${image}">
+            </div>
+            <div class="page">
+                <h6>${category}</h6>
+                <h3>${title}</h3>
+                <p>${excerpt}</p>
+                <div class="about">
+                    <div>
+                        <img src="images/Image (Margot Ellison).png">
+                    </div>
+                    <p>${author} · ${createdAt} · ${readTime} min read</p>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderPosts(posts) {
+        const postsGrid = document.getElementById("postsGrid");
+        if (!postsGrid) return;
+
+        const list = Array.isArray(posts) ? posts : [];
+        const cards = list.slice(0, 3).map((post) => {
+            const category = safeText(post.category, "ideas").toLowerCase();
+            const title = safeText(post.title, "Untitled");
+            const excerpt = safeText(post.excerpt, post.content || "A thoughtful piece on ideas worth keeping.");
+            const author = post.author && post.author.fullName ? post.author.fullName : "thomas vael";
+            const readTime = post.readTime || 5;
+            const image = safeText(post.imageUrl, "images/BlogListing.png");
+
+            return `
+                <div class="tech-sub">
+                    <div class="tech-image">
+                        <img src="${image}">
+                    </div>
+                    <h1 class="come">${category}</h1>
+                    <h2 class="welcome">${title}</h2>
+                    <p class="story">${excerpt}</p>
+                    <div class="more">
+                        <div>
+                            <img src="images/Image (Thomas Vael) (1).png">
+                        </div>
+                        <p>${author.toLowerCase()}. ${readTime} min</p>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        postsGrid.innerHTML = cards;
+    }
+
+    async function loadPosts() {
+        try {
+            const response = await apiRequest("/api/posts");
+            const content = response && Array.isArray(response.content)
+                ? response.content
+                : Array.isArray(response)
+                    ? response
+                    : Array.isArray(response?.posts)
+                        ? response.posts
+                        : [];
+
+            if (!content.length) return;
+
+            renderFeaturedPost(content[0]);
+            renderPosts(content.slice(1));
+        } catch (error) {
+            console.error("Failed to load posts:", error);
+        }
+    }
+
+    loadPosts();
  </script>
 </body>
 </html>

@@ -9,10 +9,14 @@
 <body>
 <header class="content">
 <div class="view">The Margin</div>
-<nav>
-    <a href="#">Post</a>
-<a href="#">Sign in</a>
-<button>GET STARTED</button>
+<nav id="not-login">
+    <a href="../index.html">Post</a>
+    <a href="./logged in .html">Sign in</a>
+    <button><a href="../register/register.html">Get started</a></button>
+</nav>
+<nav id="login" style="display: none;">
+    <a href="../index.html">Post</a>
+    <button class="write-post" style="background-color: #b8651a;"><a href="./Blog details/CULTURE/Culture.html">Write</a></button>
 </nav>
 </header>
 <section class="inform">
@@ -36,31 +40,47 @@
 </div>
 <script src="../home-logged in/API/api.js"></script>
 <script>
-    async function loginStudent(email, password) { 
-  const data = await apiRequest("/api/auth/login", { 
-    method: "POST", 
-    body: JSON.stringify({ email, password }), 
-  }); 
-  
-  localStorage.setItem("token", data.token); 
-  localStorage.setItem("student", JSON.stringify(data.student)); 
-  
-  return data.student; 
-} 
- submitBtn.textContent = "Sending...";
+    const token = localStorage.getItem("token");
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => { 
-  e.preventDefault(); 
-  try { 
-    await loginStudent( 
-      document.getElementById("email").value, 
-      document.getElementById("password").value 
-    ); 
-    window.location.href = "./logged in.html"; 
-  } catch (err) { 
-    alert(err.message); // e.g. "Invalid email or password" 
-  } 
-}); 
+    if (token == null || token == "") {
+        document.getElementById("not-login").style.display = "flex";
+        document.getElementById("login").style.display = "none";
+    } else {
+        document.getElementById("not-login").style.display = "none";
+        document.getElementById("login").style.display = "flex";
+    }
+
+    const submitBtn = document.getElementById("submitBtn");
+
+    async function loginStudent(email, password) {
+      const data = await apiRequest("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("student", JSON.stringify(data.student));
+      return data.student;
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Sending...";
+
+      try {
+        await loginStudent(
+          document.getElementById("email").value.trim(),
+          document.getElementById("password").value
+        );
+        window.location.href = "../index.html";
+      } catch (err) {
+        alert(err.message || "Login failed. Please try again.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create account";
+      }
+    });
 </script>
 
 </body>

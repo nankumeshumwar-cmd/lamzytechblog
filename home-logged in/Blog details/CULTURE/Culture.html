@@ -10,48 +10,55 @@
    
 <header class="content">
 <div class="view">The Margin</div>
-<nav>
-    <a href="#">Posts</a>
-<button>Write</button>
-<div>
-    <img src="images/Image (Margot Ellison).png">
-</div>
+<nav id="not-login">
+    <a href="../../../index.html">Post</a>
+    <a href="../../logged in .html">Sign in</a>
+    <button><a href="../../../register/register.html">Get started</a></button>
+</nav>
+<nav id="login" style="display: none;">
+    <a href="../../../index.html">Post</a>
+    <button class="write-post" style="background-color: #b8651a;"><a href="./Culture.html">Write</a></button>
 </nav>
 </header>
 <section class="inform">
 
     <section class="topbar">
         <form id="createPostForm">
-        <h1>Write a new post</h1>
-        <p>Share an idea, an essay, a reflection.</p>
-        <p>title</p>
-        <input id="title" type="text" placeholder="something worth reading">
-        <label>Excerpt (optional — generated from content if blank)</label>
-        <input id="title" type="text" placeholder="A sentence or two that draws the reader in.">
-        <div class="layout">
-            <div class="mr-jesse">
-                <label class="run">Category</label>
-                <input id="title" type="text" placeholder="culture">
-
+            <h1>Write a new post</h1>
+            <p>Share an idea, an essay, a reflection.</p>
+            <p>Title</p>
+            <input id="title" type="text" placeholder="something worth reading">
+            <label for="excerpt">Excerpt (optional — generated from content if blank)</label>
+            <input id="excerpt" type="text" placeholder="A sentence or two that draws the reader in.">
+            <div class="layout">
+                <div class="mr-jesse">
+                    <label class="run" for="category">Category</label>
+                    <input id="category" type="text" placeholder="culture">
+                </div>
+                <div class="lamzy">
+                    <label for="readTime">Read time (minutes)</label>
+                    <input id="readTime" type="text" placeholder="Read time (minutes)">
+                </div>
             </div>
-            <div class="lamzy">
-                <label>Read time (minutes)</label>
-                <input id="title" type="text" placeholder="Read time (minutes) ">
-            </div>
-        </div>
 
-        <div class="space">
-            <p>Content</p>
-            <textarea placeholder="Start writing... Separate paragraphs with a blank line. Wrap *words* in asterisks for italics."
-                        rows=20></textarea>
-        
-        </div>
-    </form>
-    
-        <div class="meta">
-            <button>Publish post</button>
-            <p>cancel</p>
-        </div>  
+            <div class="space">
+                <p>Content</p>
+                <textarea id="content" placeholder="Start writing... Separate paragraphs with a blank line. Wrap *words* in asterisks for italics." rows="20"></textarea>
+            </div>
+
+            <div class="layout">
+                <div class="mr-jesse">
+                    <label for="imageUrl">Image URL (optional)</label>
+                    <input id="imageUrl" type="text" placeholder="https://example.com/image.jpg">
+                </div>
+            </div>
+
+            <div class="meta">
+                <button type="submit">Publish post</button>
+                <p>cancel</p>
+            </div>
+        </form>
+    </section>
     
     
     
@@ -68,42 +75,72 @@
 
 </section>
 
+<script>
+    const token = localStorage.getItem("token");
+
+    if (token == null || token == "") {
+        document.getElementById("not-login").style.display = "flex";
+        document.getElementById("login").style.display = "none";
+    } else {
+        document.getElementById("not-login").style.display = "none";
+        document.getElementById("login").style.display = "flex";
+    }
+</script>
 <script src="../../API/api.js"></script>
 <script>
-    async function createPost(title, content, category, imageUrl) { 
-  return await apiRequest( 
-    "/api/posts", 
-    { 
-      method: "POST", 
-      body: JSON.stringify({ title, content, category, imageUrl }), 
-    }, 
-    true // authRequired = true, attaches the JWT 
-  ); 
-} 
-document.getElementById("createPostForm").addEventListener("submit", async (e) => { 
-  e.preventDefault(); 
-  
-  if (!isLoggedIn()) { 
-    alert("You need to log in first."); 
-    window.location.href = "login.html"; 
-    return; 
-  } 
-  
-  try { 
-    const post = await createPost( 
-      document.getElementById("title").value, 
-      document.getElementById("content").value, 
-      document.getElementById("category").value, 
-      document.getElementById("imageUrl").value // can be empty 
-    ); 
-     submitBtn.textContent = "Sending...";
-    window.location.href = `}`; 
-  } catch (err) { 
-    alert(err.message); // e.g. "Title is required" 
-  } 
-}); 
- 
+    const form = document.getElementById("createPostForm");
+    const submitBtn = document.querySelector("#createPostForm button[type='submit']");
 
+    async function createPost(title, content, category, excerpt = "", readTime = "", imageUrl = "") {
+      return await apiRequest(
+        "/api/posts",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            title,
+            content,
+            category,
+            excerpt: excerpt || undefined,
+            readTime: readTime ? Number(readTime) : undefined,
+            imageUrl: imageUrl || undefined,
+          }),
+        },
+        true
+      );
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!isLoggedIn()) {
+        alert("You need to log in first.");
+        window.location.href = "../../logged in .html";
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Publishing...";
+
+      try {
+        const imageUrlInput = document.getElementById("imageUrl");
+        await createPost(
+          document.getElementById("title").value.trim(),
+          document.getElementById("content").value.trim(),
+          document.getElementById("category").value.trim(),
+          document.getElementById("excerpt").value.trim(),
+          document.getElementById("readTime").value.trim(),
+          imageUrlInput ? imageUrlInput.value.trim() : ""
+        );
+
+        alert("Post published successfully.");
+        window.location.href = "../../index.html";
+      } catch (err) {
+        alert(err.message || "Unable to publish post.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Publish post";
+      }
+    });
 </script>
 </body>
 </html>

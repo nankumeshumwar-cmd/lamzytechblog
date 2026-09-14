@@ -11,11 +11,15 @@
 <body>
     <header>
         <div class="view">The Margin</div>
-        <nav>
-             <a href="#">Post</a>
-<a href="#">Sign in</a>
-<button>GET STARTED</button>
-</nav>
+        <nav id="not-login">
+             <a href="../index.html">Post</a>
+             <a href="../home-logged in/logged in .html">Sign in</a>
+             <button><a href="./register.html">Get started</a></button>
+        </nav>
+        <nav id="login" style="display: none;">
+             <a href="../index.html">Post</a>
+             <button class="write-post" style="background-color: #b8651a;"><a href="../home-logged in/Blog details/CULTURE/Culture.html">Write</a></button>
+        </nav>
 </header>
 <section class="inform">
     <form id="registerForm">
@@ -29,7 +33,7 @@
         <label for="password">Password</label>
         <input id="password" type="password" placeholder="1234567">
         <button id="submitBtn" type="submit" class="down">Create account</button>
-        <label for="signIn" class="type">Already have an account?<a class="sign-up" href="">Sign in</a> </label>
+        <label for="signIn" class="type">Already have an account?<a class="sign-up" href="../home-logged in/logged in .html">Sign in</a> </label>
         
     </form>
 </section>
@@ -38,7 +42,17 @@
     <h2>A place for ideas worth keeping.</h2>
 </div>
 
+<script>
+  const token = localStorage.getItem("token");
 
+  if (token == null || token == "") {
+      document.getElementById("not-login").style.display = "flex";
+      document.getElementById("login").style.display = "none";
+  } else {
+      document.getElementById("not-login").style.display = "none";
+      document.getElementById("login").style.display = "flex";
+  }
+</script>
 
 <script src="../home-logged in/API/api.js"></script>
 
@@ -50,10 +64,16 @@
 
 
 
-  async function registerStudent(fullName, email, password, ) {
+  async function registerStudent(fullName, email, password) {
     const data = await apiRequest("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ fullName, email, password , department: "Computer Science", level: "300"}),
+      body: JSON.stringify({
+        fullName,
+        email,
+        password,
+        department: "Computer Science",
+        level: "300",
+      }),
     });
 
     localStorage.setItem("token", data.token);
@@ -65,24 +85,18 @@
     e.preventDefault();
     submitBtn.disabled = true;
     submitBtn.textContent = "Sending...";
-    console.log("registering...");
-    try {
 
-      // const student = {
-      //   id: "hello",
-      //   fullName: "Christabel"
-      // }
+    try {
       const student = await registerStudent(
-        document.getElementById("fullName").value,
-        document.getElementById("email").value,
-        document.getElementById("password").value,
-    
+        document.getElementById("fullName").value.trim(),
+        document.getElementById("email").value.trim(),
+        document.getElementById("password").value
       );
-      console.log(`Welcome, ${student.fullName}! Token saved. Redirecting to login test page...`);
-      setTimeout(() => (window.location.href = "../home.html"), 1200);
+
+      console.log(`Welcome, ${student.fullName}! Token saved. Redirecting to login page...`);
+      setTimeout(() => (window.location.href = "../home-logged in/logged in .html"), 800);
     } catch (err) {
-        console.log(err)
-      console.log(err.message);
+      alert(err.message || "Registration failed. Please try again.");
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = "Create account";
