@@ -1,9 +1,15 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing:border-box ;
+    box-sizing: border-box;
+}
+body {
+    background: #FAF8F4;
+    color: #1A1610;
+    font-family: Poppins, sans-serif;
 }
 header {
+    width: 100%;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -13,26 +19,16 @@ header {
     gap: 20px;
     padding-bottom: 10px;
    border-color: #D9D2C5
-}  
+}
+header .first {
+    padding: 16px 24px;
+    font-size: 18px;
+}
 .how {
     color: #B8651A;
     justify-content: left;
     margin: 0px;
 display: flex
-}
-.page {
-    display: grid;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 1px solid;
-    border-color: #D9D2C5;
-    padding-top: 64px;
-}
-.more {
-    display: flex;
-    text-align: center;
-    padding: 16px;
-    gap: 5px;
 }
 a {
 
@@ -51,22 +47,84 @@ button {
     padding-bottom: 6px;
     padding-left: 16px;
 }
-.middle {
-    width: 100%;
-    margin: auto;
-    display: grid;
-    justify-content: centers;
+.post-state {
+    max-width: 760px;
+    margin: 80px auto;
+    padding: 0 24px;
+    color: #7A7060;
     text-align: center;
-    border-top: 1px;
-    padding-top: 64px;
-    color:#D9D2C5;
-    padding-left: 24px;
-    padding: 24px;
-    padding-bottom: 64;
 }
-.body {
+.error-message {
+    color: #9B3D2A;
+}
+.post-details {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+.back-link {
+    display: inline-block;
+    margin-bottom: 48px;
+    color: #B8651A;
+}
+.post-reading {
+    max-width: 720px;
+    margin: 0 auto;
+}
+.post-reading h1 {
+    margin: 12px 0 20px;
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.15;
+    font-weight: 500;
+}
+.post-excerpt {
+    color: #7A7060;
+    font-size: 18px;
+    line-height: 1.7;
+}
+.post-byline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 28px 0 36px;
+    color: #7A7060;
+    font-size: 14px;
+}
+.post-byline img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.post-featured-image {
+    width: 100%;
+    max-height: 520px;
+    margin-bottom: 40px;
+    object-fit: cover;
+}
+.post-content {
+    white-space: pre-wrap;
     color: #1A1610;
     font-size: 18px;
-font-weight: 400;
-gap: 10px;
+    line-height: 1.9;
+}
+
+@media (max-width: 600px) {
+    header .first {
+        padding-left: 16px;
+    }
+    nav {
+        gap: 10px;
+        padding-right: 8px;
+    }
+    .post-details {
+        padding: 32px 20px 56px;
+    }
+    .back-link {
+        margin-bottom: 32px;
+    }
+    .post-content {
+        font-size: 16px;
+        line-height: 1.8;
+    }
 }

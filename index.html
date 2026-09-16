@@ -26,16 +26,29 @@
     <h4 class="writing">Independent writing</h4>
     <h2 class="reading">Ideas worth sitting with.</h2>
     <p class="under">Essays on culture, technology, and the examined life. No <br>algorithms, no hot takes.</p>
- 
-    <div id="featuredPost" class="information"></div>
-  
-    <section class="below-hero">
-        
-        <div class="title">MORE Essays</div>
-        
-        <div id="postsGrid" class="tech"></div>
-    </section>
-</div> 
+
+    <article id="featuredPost" class="information">
+        <div class="featured-image-column">
+            <img id="featuredImage" src="images/Image (The Quiet Discipline of Reading Without Purpose).png" alt="">
+        </div>
+        <div id="featuredContent" class="page">
+            <p id="featuredCategory" class="post-category">culture</p>
+            <h3 id="featuredHeading"><a id="featuredTitle" class="post-link" href="./home-logged in/Blog details/Blog.html">The Quiet Discipline of Reading Without Purpose</a></h3>
+            <p id="featuredExcerpt">In an age of productivity optimization, there is something quietly radical about picking up a book with no agenda beyond the pleasure of it.</p>
+            <div class="about">
+                <div class="post-avatar">
+                    <img id="featuredAuthorImage" src="images/Image (Margot Ellison).png" alt="">
+                </div>
+                <p id="featuredMeta">Margot Ellison · Recently · 4 min read</p>
+            </div>
+        </div>
+    </article>
+</div>
+
+ <section class="below-hero">
+     <div class="title">MORE Essays</div>
+     <div id="postsList" class="posts-grid api-posts"></div>
+ </section>
 
  <div class="footer">
     <h2 class="title">the margin</h2>
@@ -70,8 +83,7 @@
     }
 
     function renderFeaturedPost(post) {
-        const featured = document.getElementById("featuredPost");
-        if (!featured || !post) return;
+        if (!post) return;
 
         const image = safeText(post.imageUrl, "images/Image (The Quiet Discipline of Reading Without Purpose).png");
         const category = safeText(post.category, "culture").toLowerCase();
@@ -81,26 +93,32 @@
         const readTime = post.readTime || 4;
         const createdAt = formatDate(post.createdAt || post.date);
 
-        featured.innerHTML = `
-            <div>
-                <img src="${image}">
-            </div>
-            <div class="page">
-                <h6>${category}</h6>
-                <h3>${title}</h3>
-                <p>${excerpt}</p>
-                <div class="about">
-                    <div>
-                        <img src="images/Image (Margot Ellison).png">
-                    </div>
-                    <p>${author} · ${createdAt} · ${readTime} min read</p>
-                </div>
-            </div>
-        `;
+        document.getElementById("featuredImage").src = image;
+        document.getElementById("featuredImage").alt = title;
+        document.getElementById("featuredCategory").textContent = category;
+        document.getElementById("featuredTitle").textContent = title;
+        document.getElementById("featuredTitle").href = `./home-logged in/Blog details/Blog.html?id=${encodeURIComponent(post.id)}`;
+        document.getElementById("featuredExcerpt").textContent = excerpt;
+        document.getElementById("featuredMeta").textContent = `${author} · ${createdAt} · ${readTime} min read`;
+        const featuredPost = document.getElementById("featuredPost");
+        featuredPost.dataset.postId = post.id;
+        featuredPost.tabIndex = 0;
+        featuredPost.onclick = (event) => {
+            if (!event.target.closest("a")) window.location.href = document.getElementById("featuredTitle").href;
+        };
+        featuredPost.onkeydown = (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                window.location.href = document.getElementById("featuredTitle").href;
+            }
+        };
+        if (post.author && post.author.imageUrl) {
+            document.getElementById("featuredAuthorImage").src = post.author.imageUrl;
+        }
     }
 
     function renderPosts(posts) {
-        const postsGrid = document.getElementById("postsGrid");
+        const postsGrid = document.getElementById("postsList");
         if (!postsGrid) return;
 
         const list = Array.isArray(posts) ? posts : [];
@@ -110,27 +128,46 @@
             const excerpt = safeText(post.excerpt, post.content || "A thoughtful piece on ideas worth keeping.");
             const author = post.author && post.author.fullName ? post.author.fullName : "thomas vael";
             const readTime = post.readTime || 5;
+            const createdAt = formatDate(post.createdAt || post.date);
             const image = safeText(post.imageUrl, "images/BlogListing.png");
+            const avatar = safeText(post.author && post.author.imageUrl, "images/Image (Thomas Vael) (1).png");
 
             return `
-                <div class="tech-sub">
-                    <div class="tech-image">
+                <article class="post-card" data-post-id="${post.id}" tabindex="0">
+                    <a class="post-card-image post-link" href="./home-logged in/Blog details/Blog.html?id=${encodeURIComponent(post.id)}" aria-label="Read ${title}">
                         <img src="${image}">
-                    </div>
-                    <h1 class="come">${category}</h1>
-                    <h2 class="welcome">${title}</h2>
-                    <p class="story">${excerpt}</p>
-                    <div class="more">
-                        <div>
-                            <img src="images/Image (Thomas Vael) (1).png">
+                    </a>
+                    <p class="post-category">${category}</p>
+                    <h2 class="post-title"><a class="post-link" href="./home-logged in/Blog details/Blog.html?id=${encodeURIComponent(post.id)}">${title}</a></h2>
+                    <p class="post-excerpt"  style="display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden">${excerpt}</p>
+                    <div class="post-meta">
+                        <div class="post-avatar">
+                            <img src="${avatar}">
                         </div>
-                        <p>${author.toLowerCase()}. ${readTime} min</p>
+                        <p>${author} · ${createdAt} · ${readTime} min read</p>
                     </div>
-                </div>
+                </article>
             `;
         }).join("");
 
         postsGrid.innerHTML = cards;
+
+        postsGrid.querySelectorAll(".post-card").forEach((card) => {
+            const postLink = card.querySelector(".post-link");
+            const openPost = () => {
+                if (postLink) window.location.href = postLink.href;
+            };
+
+            card.addEventListener("click", (event) => {
+                if (!event.target.closest("a")) openPost();
+            });
+            card.addEventListener("keydown", (event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openPost();
+                }
+            });
+        });
     }
 
     async function loadPosts() {
@@ -144,12 +181,18 @@
                         ? response.posts
                         : [];
 
-            if (!content.length) return;
+            localStorage.setItem("lamzytech.posts", JSON.stringify(content));
+
+            if (!content.length) {
+                document.getElementById("postsList").innerHTML = "<p class=\"api-message\">No posts are available right now.</p>";
+                return;
+            }
 
             renderFeaturedPost(content[0]);
             renderPosts(content.slice(1));
         } catch (error) {
             console.error("Failed to load posts:", error);
+            document.getElementById("postsList").innerHTML = "<p class=\"api-message\">We could not load the posts right now. Please try again later.</p>";
         }
     }
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>project</title>
+    <title>Post | The Margin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -22,41 +22,27 @@
         <button class="write-post" style="background-color: #b8651a;"><a href="./CULTURE/Culture.html">Write</a></button>
      </nav>
  </header>
- <div class="information">
+ <main id="postState" class="post-state" aria-live="polite">Loading post...</main>
 
-        <div class="page">
-            <h6 class="how">culture</h6>
-            <h3>The Quiet Discipline of Reading Without Purpose</h3>
-            
-            <p>In an age of productivity optimization, there is<br> something quietly radical about picking up a<br> book with no agenda beyond the pleasure of it.</p>
-            <div class="more">
-                <div>
-                    <img src="image/Image (Margot Ellison).png">
-                </div>
-                <h3>Margot Ellison</h3>
-                <p>August 18, 2026 · 4 min read</p>
-            </div>
+ <main id="postDetails" class="post-details" hidden>
+    <a class="back-link" href="../../index.html">&larr; Back to Posts</a>
+    <article class="post-reading">
+        <p id="postCategory" class="how"></p>
+        <h1 id="postTitle"></h1>
+        <p id="postExcerpt" class="post-excerpt"></p>
+        <div class="post-byline">
+            <img id="postAuthorImage" alt="" hidden>
+            <p><strong id="postAuthor"></strong><span aria-hidden="true"> &middot; </span><time id="postDate"></time></p>
+        </div>
+        <img id="postImage" class="post-featured-image" alt="" hidden>
+        <div id="postContent" class="post-content"></div>
+    </article>
+ </main>
 
-            <div>;
-                 <img src="image/Image (The Quiet Discipline of Reading Without Purpose).png">
-            </div>
-            <p>In an age of productivity optimization, there is something quietly radical about<br> picking up a book with no agenda beyond the pleasure of it. We have turned<br> reading into a metric — books per year, pages per day, highlights per chapter. The<br> algorithm rewards volume; our bookshelves become résumés.</p>
-            <p>But there is another kind of reading, older and less celebrated. It wanders. It stops <br>in the middle of a paragraph to stare at the ceiling. It rereads the same sentence<br> four times not because it is difficult, but because it is beautiful.</p>
-            <p>I call this purposeless reading, though the name is slightly unfair. It has enormous<br> purpose. It just refuses to be measured.</p>
-            <p>The ancient Greeks had a word — schole — that we translate as leisure, but which<br> meant something closer to the freedom to think. Aristotle believed it was the<br> condition under which genuine learning became possible. Not the grinding<br> acquisition of skills, but the open-handed reception of ideas.</p>
-            <p>When I read without purpose, I am practicing a form of schole. I am telling the<br> world, for an hour, that I am not optimizing anything. The book may change me. It<br> probably will. But I am not reading it for that.</p>
-         </div>   
- </div>
+ <main id="postError" class="post-state error-message" hidden></main>
 
-
- <div class="middle">
-    <p class> ← All posts</p>
-    <p class>More from Margot Ellison</p>
-    <p>On Cities That Reward Slowness</p>
-    <p>6 min read</p>
-
- </div>
-<script>
+ <script src="../API/api.js"></script>
+ <script>
     const token = localStorage.getItem("token");
 
     if (token == null || token == "") {
@@ -66,9 +52,117 @@
         document.getElementById("not-login").style.display = "none";
         document.getElementById("login").style.display = "flex";
     }
-</script>
-</head>
-<body>
-    
-</body>
+
+    const postId = new URLSearchParams(window.location.search).get("id");
+    const postState = document.getElementById("postState");
+    const postDetails = document.getElementById("postDetails");
+    const postError = document.getElementById("postError");
+
+    function formatDate(value) {
+        if (!value) return "Date unavailable";
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        });
+    }
+
+    function getPostName(post) {
+        return post.author?.fullName || "Unknown author";
+    }
+
+    function renderPost(post) {
+        post = post?.post || post;
+        if (!post) throw new Error("The API returned an empty post.");
+
+        const authorName = getPostName(post);
+        const image = post.imageUrl;
+        const content = post.content || "No content is available for this post.";
+
+        document.title = `${post.title || "Post"} | The Margin`;
+        document.getElementById("postCategory").textContent = post.category || "Essay";
+        document.getElementById("postTitle").textContent = post.title || "Untitled post";
+        const excerpt = document.getElementById("postExcerpt");
+        excerpt.textContent = post.excerpt || "";
+        excerpt.hidden = !post.excerpt;
+        document.getElementById("postAuthor").textContent = authorName;
+        document.getElementById("postDate").textContent = formatDate(post.createdAt || post.date);
+        document.getElementById("postContent").textContent = content;
+
+        const postImage = document.getElementById("postImage");
+        if (image) {
+            postImage.src = image;
+            postImage.alt = post.title || "Featured post image";
+            postImage.hidden = false;
+        }
+
+        const authorImage = document.getElementById("postAuthorImage");
+        if (post.author?.imageUrl) {
+            authorImage.src = post.author.imageUrl;
+            authorImage.alt = authorName;
+            authorImage.hidden = false;
+        }
+
+        postState.hidden = true;
+        postDetails.hidden = false;
+    }
+
+    function getCachedPost() {
+        try {
+            const posts = JSON.parse(localStorage.getItem("lamzytech.posts") || "[]");
+            return Array.isArray(posts)
+                ? posts.find((post) => String(post.id) === String(postId))
+                : null;
+        } catch (error) {
+            console.warn("Could not read cached posts:", error);
+            return null;
+        }
+    }
+
+    function getPostsFromResponse(response) {
+        return response && Array.isArray(response.content)
+            ? response.content
+            : Array.isArray(response)
+                ? response
+                : Array.isArray(response?.posts)
+                    ? response.posts
+                    : [];
+    }
+
+    async function loadPost() {
+        if (!postId) {
+            postState.hidden = true;
+            postError.textContent = "This post link is missing an ID. Return to Posts and choose a post to read.";
+            postError.hidden = false;
+            return;
+        }
+
+        try {
+            const cachedPost = getCachedPost();
+            if (cachedPost) {
+                renderPost(cachedPost);
+                return;
+            }
+
+            const response = await apiRequest("/api/posts");
+            const posts = getPostsFromResponse(response);
+            const post = posts.find((item) => String(item.id) === String(postId));
+
+            if (!post) {
+                throw new Error("This post could not be found.");
+            }
+
+            localStorage.setItem("lamzytech.posts", JSON.stringify(posts));
+            renderPost(post);
+        } catch (error) {
+            console.error("Failed to load post:", error);
+            postState.hidden = true;
+            postError.textContent = error.message || "We could not load this post. It may have been removed or the API may be unavailable.";
+            postError.hidden = false;
+        }
+    }
+
+    loadPost();
+ </script>
 </html>

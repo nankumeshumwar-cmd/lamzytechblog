@@ -61,7 +61,8 @@ a {
 }
 input {
     max-width: 624px;
-    color: #FAF8F4;
+    color: black;
+    background-color: white;
     padding-left: 16px;
     padding-right: 16px;
     padding-top: 12px;

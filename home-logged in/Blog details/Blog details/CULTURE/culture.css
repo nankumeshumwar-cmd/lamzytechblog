@@ -33,26 +33,30 @@ a {
     display:grid;
     font-weight: 400;
     font-size: 12px;
-    color: #7A7060;
+    color: black;
 }
 .lamzy {
     display: grid;
      font-weight: 400;
     font-size: 12px;
-    color: #7A7060
+    
+    
 }
 .layout {
     display:grid;
     grid-template-columns: repeat(2,1fr);
     padding-top: 24px;
 }
-input {
-    color: #FAF8F4;
+
+    input {
+    color: #000000;
+    background-color: white;
+    padding: 12px 16px;
     padding-left: 16px;
     padding-right: 16px;
     padding-top: 12px;
     padding-bottom: 12px;
-}
+    }
 .space {
     padding-left: 16px;
     padding-right: 16px;
